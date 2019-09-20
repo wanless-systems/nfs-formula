@@ -4,10 +4,15 @@ nfs:
   mount_opts: noauto,ro
   persist_unmount: True
   persist_mount: False
-  
+  force_ports:
+    mountd_port: 33331
+    statd_port: 33332
+    lockd_udp_port: 33333
+    lockd_tcp_port: 33334
+
   # Server settings
   server:
-    exports: 
+    exports:
       /srv/homes: "hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)"
     # FreeBSD specific:
     mountd_flags: -l -S
@@ -25,4 +30,3 @@ nfs:
       mountpoint: "/some/other/path"
       location: "hostname:/other/path"
       persist: False
-

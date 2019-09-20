@@ -4,7 +4,7 @@
 nfs-server-deps:
     pkg.installed:
         - pkgs: {{ nfs.pkgs_server|json }}
-{% endif %}          
+{% endif %}
 
 nfs-exports-configure:
   file.managed:
@@ -14,13 +14,23 @@ nfs-exports-configure:
     - watch_in:
       - service: nfs-service
 
+{%- if nfs.force_ports is defined and grains.get('os_family') == 'RedHat' %}
+nfs-force-ports:
+  file.managed:
+    - name: {{ nfs.nfs_server_sysconf_file }}
+    - source: {{ nfs.nfs_server_sysconf_template }}
+    - template: jinja
+    - watch_in:
+      - service: nfs-service
+{%- endif %}
+
 nfs-service:
   service.running:
-{% if nfs.service_name is string %}  
+{% if nfs.service_name is string %}
     - name: {{ nfs.service_name }}
-{% elif nfs.service_name is iterable %}      
+{% elif nfs.service_name is iterable %}
     - names: {{ nfs.service_name }}
-{% endif %}      
+{% endif %}
     - enable: True
 
 {% if grains.get('os') == 'FreeBSD' %}
